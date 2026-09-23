@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Status | FixFlow</title>
+</head>
+<body>
+    <main>
+        <h1>Repair Status</h1>
+
+        <p>
+            <strong>Tracking code:</strong>
+            {{ ticket.tracking_code }}
+        </p>
+
+        <p>
+            <strong>Device:</strong>
+            {{ ticket.device_label }}
+        </p>
+
+        <p>
+            <strong>Current status:</strong>
+            {{ ticket.status }}
+        </p>
+
+        {% if ticket.expected_completion_date %}
+            <p>
+                <strong>Expected completion:</strong>
+                {{ ticket.expected_completion_date }}
+            </p>
+        {% endif %}
+
+        {% if ticket.customer_visible_note %}
+            <p>
+                <strong>Update:</strong>
+                {{ ticket.customer_visible_note }}
+            </p>
+        {% endif %}
+
+        <h2>Repair Progress</h2>
+
+        <ul>
+            {% for event in ticket.history %}
+                <li>
+                    {{ event.created_at }}
+
+                    {% if event.from_status %}
+                        {{ event.from_status }} →
+                    {% endif %}
+
+                    {{ event.to_status }}
+
+                    {% if event.customer_note %}
+                        — {{ event.customer_note }}
+                    {% endif %}
+                </li>
+            {% empty %}
+                <li>No repair progress updates yet.</li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>
