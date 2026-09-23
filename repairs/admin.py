@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import Customer, Device, RepairTicket
+from .models import (
+    Customer,
+    Device,
+    RepairTicket,
+    DeviceCondition,
+    IntakePhoto,
+)
 
 # Register your models here.
 
@@ -39,8 +45,17 @@ class DeviceAdmin(admin.ModelAdmin):
 
 admin.site.register(Device, DeviceAdmin)
 
+
+
+# Intake Photo Inline Admin
+class IntakePhotoInline(admin.TabularInline):
+    model = IntakePhoto
+    extra = 1
+    fields = ("image", "caption")
+
+
+
 # Repair Ticket Admin
-# @admin.register(RepairTicket)
 class RepairTicketAdmin(admin.ModelAdmin):
     list_display = (
         "tracking_code",
@@ -73,4 +88,46 @@ class RepairTicketAdmin(admin.ModelAdmin):
     )
 
     ordering = ("-created_at",)
+
+    inlines = (IntakePhotoInline,)
 admin.site.register(RepairTicket, RepairTicketAdmin)
+
+
+# Device Condition Admin
+class DeviceConditionAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket",
+        "screen_condition",
+        "body_condition",
+        "powers_on",
+    )
+
+    list_filter = (
+        "screen_condition",
+        "body_condition",
+        "powers_on",
+    )
+
+    search_fields = (
+        "ticket__tracking_code",
+        "ticket__device__customer__phone",
+    )
+admin.site.register(DeviceCondition, DeviceConditionAdmin)
+
+
+
+# Intake Photo Admin
+class IntakePhotoAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket",
+        "caption",
+        "uploaded_at",
+    )
+
+    search_fields = (
+        "ticket__tracking_code",
+        "caption",
+    )
+
+    ordering = ("-uploaded_at",)
+admin.site.register(IntakePhoto, IntakePhotoAdmin)
