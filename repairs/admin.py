@@ -12,10 +12,25 @@ from .models import (
 
 # Customer Admin
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("full_name", "phone", "email", "created_at")
-    search_fields = ("full_name", "phone", "email")
-    ordering = ("-created_at",)
+    list_display = (
+        "full_name",
+        "phone",
+        "email",
+        "created_at",
+    )
 
+    search_fields = (
+        "full_name",
+        "phone",
+        "email",
+    )
+
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
+
+    ordering = ("-created_at",)
 admin.site.register(Customer, CustomerAdmin)
 
 
@@ -28,9 +43,11 @@ class DeviceAdmin(admin.ModelAdmin):
         "customer",
         "imei_or_serial",
         "created_at",
-        )
+    )
 
-    list_filter = ("device_type",)
+    list_filter = (
+        "device_type",
+    )
 
     search_fields = (
         "brand",
@@ -40,9 +57,11 @@ class DeviceAdmin(admin.ModelAdmin):
         "customer__phone",
     )
 
+    readonly_fields = (
+        "created_at",
+    )
+
     ordering = ("-created_at",)
-
-
 admin.site.register(Device, DeviceAdmin)
 
 
@@ -87,9 +106,13 @@ class RepairTicketAdmin(admin.ModelAdmin):
         "updated_at",
     )
 
-    ordering = ("-created_at",)
+    inlines = (
+        IntakePhotoInline,
+    )
 
-    inlines = (IntakePhotoInline,)
+    ordering = (
+        "-created_at",
+    )
 admin.site.register(RepairTicket, RepairTicketAdmin)
 
 
@@ -110,6 +133,7 @@ class DeviceConditionAdmin(admin.ModelAdmin):
 
     search_fields = (
         "ticket__tracking_code",
+        "ticket__device__customer__full_name",
         "ticket__device__customer__phone",
     )
 admin.site.register(DeviceCondition, DeviceConditionAdmin)
@@ -126,8 +150,19 @@ class IntakePhotoAdmin(admin.ModelAdmin):
 
     search_fields = (
         "ticket__tracking_code",
+        "ticket__device__customer__full_name",
+        "ticket__device__customer__phone",
         "caption",
     )
 
-    ordering = ("-uploaded_at",)
+    readonly_fields = (
+        "uploaded_at",
+    )
+
+    ordering = (
+        "-uploaded_at",
+    )
 admin.site.register(IntakePhoto, IntakePhotoAdmin)
+
+
+
