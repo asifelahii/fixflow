@@ -6,6 +6,16 @@ class TrackingForm(forms.Form):
         max_length=16,
         label="Tracking code",
         strip=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control form-control-lg",
+                "placeholder": "e.g. K2E362D5MW31",
+                "autocomplete": "off",
+                "autocapitalize": "characters",
+                "spellcheck": "false",
+                "aria-describedby": "tracking-help",
+            }
+        ),
     )
 
     def clean_tracking_code(self):

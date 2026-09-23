@@ -1,0 +1,314 @@
+:root {
+    --fixflow-navy: #0b1f33;
+    --fixflow-blue: #2463a9;
+    --fixflow-blue-light: #4f8fd8;
+
+    --fixflow-text: #19324d;
+    --fixflow-muted: #6b7f93;
+
+    --glass-bg: rgba(255, 255, 255, 0.68);
+    --glass-bg-strong: rgba(255, 255, 255, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.72);
+
+    --soft-border: rgba(96, 125, 153, 0.18);
+
+    --glass-shadow:
+        0 20px 45px rgba(15, 40, 65, 0.10),
+        0 4px 12px rgba(15, 40, 65, 0.05);
+}
+
+
+/* Page */
+
+body {
+    min-height: 100vh;
+    color: var(--fixflow-text);
+
+    background:
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(95, 155, 225, 0.24),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 88% 18%,
+            rgba(157, 199, 238, 0.22),
+            transparent 28%
+        ),
+        linear-gradient(
+            145deg,
+            #eef5fb 0%,
+            #f7f9fc 48%,
+            #edf3f8 100%
+        );
+
+    background-attachment: fixed;
+}
+
+
+/* Layout */
+
+.ff-container {
+    max-width: 760px;
+}
+
+
+/* Header */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: rgba(11, 31, 51, 0.82);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.site-header .navbar {
+    min-height: 68px;
+}
+
+.navbar-brand {
+    letter-spacing: -0.02em;
+}
+
+
+/* Glass cards */
+
+.ff-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+
+    box-shadow: var(--glass-shadow);
+
+    backdrop-filter: blur(22px) saturate(145%);
+    -webkit-backdrop-filter: blur(22px) saturate(145%);
+}
+
+
+/* Forms */
+
+.form-control {
+    min-height: 54px;
+
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(100, 130, 160, 0.24);
+    border-radius: 14px;
+
+    color: var(--fixflow-text);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.90);
+
+    border-color: rgba(36, 99, 169, 0.55);
+
+    box-shadow:
+        0 0 0 4px rgba(36, 99, 169, 0.12);
+
+    color: var(--fixflow-text);
+}
+
+.form-control::placeholder {
+    color: #8799aa;
+}
+
+
+/* Main button */
+
+.btn-primary {
+    min-height: 52px;
+
+    border: 0;
+    border-radius: 14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--fixflow-blue),
+            #397cc3
+        );
+
+    box-shadow:
+        0 8px 20px rgba(36, 99, 169, 0.20);
+
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #1e5797,
+            #3373b8
+        );
+}
+
+
+/* Tracking code */
+
+.tracking-code {
+    letter-spacing: 0.07em;
+    overflow-wrap: anywhere;
+}
+
+
+/* Status */
+
+.status-badge {
+    padding: 0.65rem 1rem;
+
+    background: rgba(36, 99, 169, 0.12) !important;
+    color: #174f88 !important;
+
+    border: 1px solid rgba(36, 99, 169, 0.16);
+
+    font-size: 0.9rem;
+    font-weight: 650;
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+
+/* Customer update */
+
+.alert-primary {
+    color: #17466f;
+
+    background: rgba(219, 237, 252, 0.66);
+
+    border: 1px solid rgba(71, 133, 190, 0.16) !important;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 25px rgba(35, 75, 110, 0.06);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+
+/* Timeline */
+
+.timeline {
+    margin: 0;
+    padding: 0 0 0 1.6rem;
+
+    border-left: 2px solid rgba(72, 111, 145, 0.18);
+
+    list-style: none;
+}
+
+.timeline-item {
+    position: relative;
+
+    padding:
+        0
+        0
+        1.75rem
+        0.65rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: "";
+
+    position: absolute;
+
+    left: -2.03rem;
+    top: 0.32rem;
+
+    width: 0.8rem;
+    height: 0.8rem;
+
+    border-radius: 50%;
+
+    background: var(--fixflow-blue);
+
+    border: 3px solid rgba(255, 255, 255, 0.92);
+
+    box-shadow:
+        0 0 0 2px rgba(36, 99, 169, 0.18);
+}
+
+.timeline-time {
+    color: var(--fixflow-muted);
+    font-size: 0.875rem;
+}
+
+
+/* Footer */
+
+.site-footer {
+    margin-top: 2rem;
+
+    background: rgba(255, 255, 255, 0.44);
+
+    border-top: 1px solid rgba(255, 255, 255, 0.66);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+
+/* Links */
+
+a {
+    text-underline-offset: 0.18em;
+}
+
+
+/* Mobile */
+
+@media (max-width: 575.98px) {
+    .ff-card {
+        border-radius: 20px;
+    }
+
+    .ff-card .card-body {
+        padding: 1.4rem !important;
+    }
+
+    .tracking-code {
+        font-size: 1.1rem;
+    }
+
+    .site-header .navbar {
+        min-height: 62px;
+    }
+}
+
+
+/* Graceful fallback where backdrop blur is unsupported */
+
+@supports not (
+    (backdrop-filter: blur(10px))
+    or
+    (-webkit-backdrop-filter: blur(10px))
+) {
+    .ff-card {
+        background: #ffffff;
+    }
+
+    .site-header {
+        background: var(--fixflow-navy);
+    }
+
+    .site-footer {
+        background: #ffffff;
+    }
+}
