@@ -1,64 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repair Status | FixFlow</title>
-</head>
-<body>
-    <main>
-        <h1>Repair Status</h1>
+{% extends "base.html" %}
 
-        <p>
-            <strong>Tracking code:</strong>
-            {{ ticket.tracking_code }}
-        </p>
+{% block title %}
+Repair Status | FixFlow
+{% endblock %}
 
-        <p>
-            <strong>Device:</strong>
-            {{ ticket.device_label }}
-        </p>
+{% block content %}
 
-        <p>
-            <strong>Current status:</strong>
-            {{ ticket.status }}
-        </p>
+<div class="mb-4">
+    <a
+        href="{% url 'repairs:home' %}"
+        class="link-secondary text-decoration-none"
+    >
+        ← Track another repair
+    </a>
+</div>
 
-        {% if ticket.expected_completion_date %}
-            <p>
-                <strong>Expected completion:</strong>
-                {{ ticket.expected_completion_date }}
-            </p>
-        {% endif %}
+<section aria-labelledby="repair-heading">
 
-        {% if ticket.customer_visible_note %}
-            <p>
-                <strong>Update:</strong>
+    <div class="card ff-card mb-4">
+        <div class="card-body p-4 p-md-5">
+
+            <div
+                class="d-flex flex-column flex-md-row
+                       justify-content-between gap-3 mb-4"
+            >
+                <div>
+                    <p class="text-body-secondary small mb-1">
+                        Tracking code
+                    </p>
+
+                    <h1
+                        id="repair-heading"
+                        class="h4 tracking-code mb-0"
+                    >
+                        {{ ticket.tracking_code }}
+                    </h1>
+                </div>
+
+                <div>
+                    <span
+                        class="badge rounded-pill text-bg-primary
+                               status-badge px-3 py-2"
+                    >
+                        Status: {{ ticket.status }}
+                    </span>
+                </div>
+            </div>
+
+            <hr>
+
+            <dl class="row mb-0">
+
+                <dt class="col-sm-5 text-body-secondary">
+                    Device
+                </dt>
+
+                <dd class="col-sm-7 fw-semibold">
+                    {{ ticket.device_label }}
+                </dd>
+
+                <dt class="col-sm-5 text-body-secondary">
+                    Current status
+                </dt>
+
+                <dd class="col-sm-7">
+                    {{ ticket.status }}
+                </dd>
+
+                {% if ticket.expected_completion_date %}
+                    <dt class="col-sm-5 text-body-secondary">
+                        Expected completion
+                    </dt>
+
+                    <dd class="col-sm-7">
+                        {{ ticket.expected_completion_date|date:"F j, Y" }}
+                    </dd>
+                {% endif %}
+
+            </dl>
+
+        </div>
+    </div>
+
+
+    {% if ticket.customer_visible_note %}
+
+        <div
+            class="alert alert-primary border-0 mb-4"
+            role="status"
+        >
+            <h2 class="h6 fw-bold">
+                Latest update
+            </h2>
+
+            <p class="mb-0">
                 {{ ticket.customer_visible_note }}
             </p>
-        {% endif %}
+        </div>
 
-        <h2>Repair Progress</h2>
+    {% endif %}
 
-        <ul>
-            {% for event in ticket.history %}
-                <li>
-                    {{ event.created_at }}
 
-                    {% if event.from_status %}
-                        {{ event.from_status }} →
-                    {% endif %}
+    <div class="card ff-card">
+        <div class="card-body p-4 p-md-5">
 
-                    {{ event.to_status }}
+            <h2 class="h5 fw-bold mb-4">
+                Repair progress
+            </h2>
 
-                    {% if event.customer_note %}
-                        — {{ event.customer_note }}
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li>No repair progress updates yet.</li>
-            {% endfor %}
-        </ul>
-    </main>
-</body>
-</html>
+            {% if ticket.history %}
+
+                <ol class="timeline">
+
+                    {% for event in ticket.history %}
+
+                        <li class="timeline-item">
+
+                            <time
+                                class="timeline-time d-block mb-1"
+                                datetime="{{ event.created_at|date:'c' }}"
+                            >
+                                {{ event.created_at|date:"F j, Y, g:i A" }}
+                            </time>
+
+                            <div class="fw-semibold">
+
+                                {% if event.from_status %}
+                                    {{ event.from_status }}
+                                    <span aria-hidden="true">→</span>
+                                {% endif %}
+
+                                {{ event.to_status }}
+
+                            </div>
+
+                            {% if event.customer_note %}
+                                <p class="mb-0 mt-2">
+                                    {{ event.customer_note }}
+                                </p>
+                            {% endif %}
+
+                        </li>
+
+                    {% endfor %}
+
+                </ol>
+
+            {% else %}
+
+                <p class="text-body-secondary mb-0">
+                    No repair progress updates are available yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}

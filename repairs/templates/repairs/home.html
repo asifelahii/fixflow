@@ -1,23 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Repair | FixFlow</title>
-</head>
-<body>
-    <main>
-        <h1>Track Your Repair</h1>
+{% extends "base.html" %}
 
-        <form method="post">
-            {% csrf_token %}
+{% block title %}
+Track Your Repair | FixFlow
+{% endblock %}
 
-            {{ form.as_p }}
+{% block content %}
 
-            <button type="submit">
-                Track Repair
-            </button>
-        </form>
-    </main>
-</body>
-</html>
+<section aria-labelledby="tracking-heading">
+
+    <div class="text-center mb-4">
+        <h1
+            id="tracking-heading"
+            class="h2 fw-bold mb-2"
+        >
+            Track your repair
+        </h1>
+
+        <p class="text-body-secondary mb-0">
+            Enter the tracking code provided by the repair shop
+            to view the latest progress.
+        </p>
+    </div>
+
+    <div class="card ff-card">
+        <div class="card-body p-4 p-md-5">
+
+            <form
+                method="post"
+                action="{% url 'repairs:home' %}"
+            >
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label
+                        for="{{ form.tracking_code.id_for_label }}"
+                        class="form-label fw-semibold"
+                    >
+                        {{ form.tracking_code.label }}
+                    </label>
+
+                    {{ form.tracking_code }}
+
+                    <div
+                        id="tracking-help"
+                        class="form-text"
+                    >
+                        Tracking codes are not case-sensitive.
+                    </div>
+
+                    {% if form.tracking_code.errors %}
+                        <div
+                            class="text-danger small mt-2"
+                            role="alert"
+                        >
+                            {{ form.tracking_code.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div
+                        class="alert alert-danger"
+                        role="alert"
+                    >
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg w-100"
+                >
+                    Track repair
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <p class="text-center text-body-secondary small mt-4 mb-0">
+        No customer account is required.
+    </p>
+
+</section>
+
+{% endblock %}

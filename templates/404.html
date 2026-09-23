@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}
+Page Not Found | FixFlow
+{% endblock %}
+
+{% block content %}
+
+<section class="text-center py-5">
+
+    <p class="text-body-secondary fw-semibold mb-2">
+        404
+    </p>
+
+    <h1 class="h2 fw-bold mb-3">
+        Page not found
+    </h1>
+
+    <p class="text-body-secondary mb-4">
+        The page or repair tracking link you requested
+        could not be found.
+    </p>
+
+    <a
+        href="{% url 'repairs:home' %}"
+        class="btn btn-primary"
+    >
+        Return to repair tracking
+    </a>
+
+</section>
+
+{% endblock %}
