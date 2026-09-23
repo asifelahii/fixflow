@@ -2,7 +2,7 @@ import secrets
 import string
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 
 # Device tracking code genaration
@@ -123,8 +123,89 @@ class RepairTicket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def change_status(
+    self,
+    new_status,
+    changed_by=None,
+    customer_note="",
+    ):
+        valid_statuses = {
+            value for value, label in REPAIR_STATUS_CHOICES
+        }
+
+        if new_status not in valid_statuses:
+            raise ValueError(f"Invalid repair status: {new_status}")
+
+        if new_status == self.status:
+            return False
+
+        previous_status = self.status
+
+        with transaction.atomic():
+            self.status = new_status
+            self.save(
+                update_fields=[
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            RepairStatusHistory.objects.create(
+                ticket=self,
+                from_status=previous_status,
+                to_status=new_status,
+                changed_by=changed_by,
+                customer_note=customer_note,
+            )
+
+        return True
+
     def __str__(self):
         return f"{self.tracking_code} - {self.device}"
+
+
+
+
+# Device repair status history
+class RepairStatusHistory(models.Model):
+    ticket = models.ForeignKey(
+        RepairTicket,
+        on_delete=models.CASCADE,
+        related_name="status_history",
+    )
+
+    from_status = models.CharField(
+        max_length=24,
+        choices=REPAIR_STATUS_CHOICES,
+        blank=True,
+    )
+
+    to_status = models.CharField(
+        max_length=24,
+        choices=REPAIR_STATUS_CHOICES,
+    )
+
+    changed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+
+    customer_note = models.TextField(
+        blank=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def __str__(self):
+        return (
+            f"{self.ticket.tracking_code}: "
+            f"{self.from_status or 'Initial'} -> {self.to_status}"
+        )
+
 
 
 

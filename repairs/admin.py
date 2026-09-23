@@ -6,6 +6,7 @@ from .models import (
     RepairTicket,
     DeviceCondition,
     IntakePhoto,
+    RepairStatusHistory,
 )
 
 # Register your models here.
@@ -74,6 +75,84 @@ class IntakePhotoInline(admin.TabularInline):
 
 
 
+
+# Repair Status History Admin
+class RepairStatusHistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "ticket",
+        "from_status",
+        "to_status",
+        "changed_by",
+        "created_at",
+    )
+
+    list_filter = (
+        "to_status",
+        "created_at",
+    )
+
+    search_fields = (
+        "ticket__tracking_code",
+        "ticket__device__customer__full_name",
+        "ticket__device__customer__phone",
+    )
+
+    readonly_fields = (
+        "ticket",
+        "from_status",
+        "to_status",
+        "changed_by",
+        "customer_note",
+        "created_at",
+    )
+
+    ordering = (
+        "-created_at",
+    )
+
+
+admin.site.register(
+    RepairStatusHistory,
+    RepairStatusHistoryAdmin,
+)
+
+
+
+
+# Repair Status History Inline Admin
+class RepairStatusHistoryInline(admin.TabularInline):
+    model = RepairStatusHistory
+    extra = 0
+
+    fields = (
+        "from_status",
+        "to_status",
+        "changed_by",
+        "customer_note",
+        "created_at",
+    )
+
+    readonly_fields = (
+        "from_status",
+        "to_status",
+        "changed_by",
+        "customer_note",
+        "created_at",
+    )
+
+    can_delete = False
+
+    def has_add_permission(
+        self,
+        request,
+        obj=None,
+    ):
+        return False
+
+
+
+
+
 # Repair Ticket Admin
 class RepairTicketAdmin(admin.ModelAdmin):
     list_display = (
@@ -108,11 +187,58 @@ class RepairTicketAdmin(admin.ModelAdmin):
 
     inlines = (
         IntakePhotoInline,
+        RepairStatusHistoryInline
     )
 
     ordering = (
         "-created_at",
     )
+
+    def save_model(
+    self,
+    request,
+    obj,
+    form,
+    change,
+    ):
+        if change and "status" in form.changed_data:
+            previous_status = (
+                RepairTicket.objects
+                .only("status")
+                .get(pk=obj.pk)
+                .status
+            )
+
+            new_status = obj.status
+
+            customer_note = ""
+            if "customer_visible_note" in form.changed_data:
+                customer_note = obj.customer_visible_note
+
+            obj.status = previous_status
+
+            super().save_model(
+                request,
+                obj,
+                form,
+                change,
+            )
+
+            obj.change_status(
+                new_status=new_status,
+                changed_by=request.user,
+                customer_note=customer_note,
+            )
+
+            return
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change,
+        )
+
 admin.site.register(RepairTicket, RepairTicketAdmin)
 
 
