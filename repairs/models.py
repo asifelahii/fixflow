@@ -7,7 +7,6 @@ from django.db import models
 
 # Device tracking code genaration
 TRACKING_ALPHABET = string.ascii_uppercase + string.digits
-
 def generate_tracking_code():
     return "".join(
         secrets.choice(TRACKING_ALPHABET)
@@ -25,7 +24,6 @@ DEVICE_TYPE_CHOICES = [
 ]
 
 # Device repair status choice options
-
 REPAIR_STATUS_CHOICES = [
     ("RECEIVED", "Received"),
     ("DIAGNOSING", "Diagnosing"),
@@ -35,6 +33,15 @@ REPAIR_STATUS_CHOICES = [
     ("READY", "Ready for Pickup"),
     ("COMPLETED", "Completed"),
 ]
+
+# Device condition level choices
+CONDITION_LEVEL_CHOICES = [
+    ("GOOD", "Good"),
+    ("MINOR_DAMAGE", "Minor damage"),
+    ("MAJOR_DAMAGE", "Major damage"),
+    ("UNKNOWN", "Unknown / not checked"),
+]
+
 
 
 # Customer model class
@@ -48,6 +55,8 @@ class Customer(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.phone}"
+
+
 
 # Device model class
 class Device(models.Model):
@@ -70,8 +79,9 @@ class Device(models.Model):
     def __str__(self):
         return f"{self.brand} {self.model_name} - {self.customer.full_name}"
 
-# Repair ticket model
 
+
+# Repair ticket model
 class RepairTicket(models.Model):
     device = models.ForeignKey(
         Device,
@@ -115,3 +125,57 @@ class RepairTicket(models.Model):
 
     def __str__(self):
         return f"{self.tracking_code} - {self.device}"
+
+
+
+# Device condition model
+class DeviceCondition(models.Model):
+    ticket = models.OneToOneField(
+        RepairTicket,
+        on_delete=models.CASCADE,
+        related_name="intake_condition",
+    )
+
+    condition_summary = models.TextField()
+
+    screen_condition = models.CharField(
+        max_length=20,
+        choices=CONDITION_LEVEL_CHOICES,
+    )
+
+    body_condition = models.CharField(
+        max_length=20,
+        choices=CONDITION_LEVEL_CHOICES,
+    )
+
+    powers_on = models.BooleanField(default=True)
+
+    accessories_received = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"Intake condition - {self.ticket.tracking_code}"
+
+
+
+
+# Intake photos model
+class IntakePhoto(models.Model):
+    ticket = models.ForeignKey(
+        RepairTicket,
+        on_delete=models.CASCADE,
+        related_name="intake_photos",
+    )
+    image = models.ImageField(
+        upload_to="repair_intake/%Y/%m/",
+    )
+    caption = models.CharField(
+        max_length=120,
+        blank=True,
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Intake photo - {self.ticket.tracking_code}"
